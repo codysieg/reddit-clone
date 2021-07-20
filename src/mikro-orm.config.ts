@@ -3,13 +3,14 @@ import { __prod__ } from "./constants";
 import { Post } from "./entities/Post";
 import path from "path";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
+import { User } from "./entities/User";
 
 export default {
   migrations: {
     path: path.join(__dirname, "./migrations"),
     pattern: /^[\w-]+\d+\.[tj]s$/,
   },
-  entities: [Post],
+  entities: [Post, User],
   driver: PostgreSqlDriver,
   dbName: "psql-reddit",
   type: "postgresql",
