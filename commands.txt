@@ -1,0 +1,5 @@
+{% comment %} Start Postgres Server {% endcomment %}
+sudo service postgresql start
+
+{% comment %} Start Redis Server {% endcomment %}
+redis-server
