@@ -13,6 +13,7 @@ import connectRedis from "connect-redis";
 import { __prod__ } from "./constants";
 import { MyContext } from "./types";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import cors from "cors";
 
 declare module "express-session" {
   interface Session {
@@ -27,9 +28,11 @@ const main = async () => {
   const app = express();
 
   const corsOptions = {
-    origin: "https://studio.apollographql.com",
+    origin: "http://localhost:3000",
     credentials: true,
   };
+
+  app.use(cors(corsOptions));
 
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
@@ -44,8 +47,8 @@ const main = async () => {
       }),
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
-        secure: true, //cookie only works in https
-        sameSite: "none", //csrf
+        secure: __prod__, //cookie only works in https
+        sameSite: "lax", //csrf
       },
       saveUninitialized: false,
       secret: "asd98d3hsadhkuahd9821hd",
@@ -71,7 +74,7 @@ const main = async () => {
   await apolloServer.start();
   apolloServer.applyMiddleware({
     app,
-    cors: corsOptions,
+    cors: false,
   });
 
   app.listen(4000, () => {

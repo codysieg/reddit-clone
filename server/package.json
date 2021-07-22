@@ -21,6 +21,7 @@
   "homepage": "https://github.com/codysieg/reddit-clone#readme",
   "devDependencies": {
     "@types/connect-redis": "^0.0.17",
+    "@types/cors": "^2.8.12",
     "@types/express-session": "^1.17.4",
     "@types/node": "^16.3.2",
     "apollo-server-express": "^3.0.0",
