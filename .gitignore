@@ -36,3 +36,5 @@ typings/
 .yarn-integrity
 
 web/.next/*
+
+dump.rdb

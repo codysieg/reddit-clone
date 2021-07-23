@@ -10,7 +10,7 @@ import { UserResolver } from "./resolvers/user";
 import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
-import { __prod__ } from "./constants";
+import { COOKIE_REDIS, __prod__ } from "./constants";
 import { MyContext } from "./types";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import cors from "cors";
@@ -39,7 +39,7 @@ const main = async () => {
 
   app.use(
     session({
-      name: "qid-redis",
+      name: COOKIE_REDIS,
       store: new RedisStore({
         client: redisClient,
         disableTouch: true,

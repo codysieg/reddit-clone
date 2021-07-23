@@ -2,25 +2,29 @@ import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import React from "react";
 
 import NextLink from "next/link";
-import { useMeQuery } from "../generated/graphql";
+import { useLogoutMutation, useMeQuery } from "../generated/graphql";
+import { isServer } from "../utils/isServer";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{ data, fetching }] = useMeQuery();
+  const [{ data, fetching }] = useMeQuery({
+    pause: isServer(),
+  });
+  const [{ fetching: logoutIsFetching }, logout] = useLogoutMutation();
   let body = null;
 
   //data is loading
-  if (fetching) {
+  if (isServer() || fetching) {
   }
   //user not logged in
-  else if (!data.me) {
+  else if (!data?.me) {
     body = (
       <>
-        <NextLink href="login">
+        <NextLink href="/login">
           <Link mr={2}>Login</Link>
         </NextLink>
-        <NextLink href="register">
+        <NextLink href="/register">
           <Link>Register</Link>
         </NextLink>
       </>
@@ -32,12 +36,18 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     body = (
       <Flex>
         <Box mr={2}>{data.me.username}</Box>
-        <Button variant="link">logout</Button>
+        <Button
+          onClick={() => logout()}
+          variant="link"
+          isLoading={logoutIsFetching}
+        >
+          logout
+        </Button>
       </Flex>
     );
   }
   return (
-    <Flex bg="tomato" p={4}>
+    <Flex bg="tan" p={4}>
       <Box ml={"auto"}>{body}</Box>
     </Flex>
   );

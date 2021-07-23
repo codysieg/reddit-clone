@@ -3,3 +3,6 @@ sudo service postgresql start
 
 {% comment %} Start Redis Server {% endcomment %}
 redis-server
+
+{% comment %} Update Mikro ORM Schema {% endcomment %}
+npx mikro-orm migration:create
