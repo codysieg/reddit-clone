@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Form, Formik } from "formik";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import { Wrapper } from "./wrapper";
 import InputField from "../components/InputField";
 import { useLoginMutation } from "../generated/graphql";
@@ -9,6 +9,7 @@ import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/dist/client/router";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
+import NextLink from "next/link";
 
 export const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
@@ -16,10 +17,10 @@ export const Login: React.FC<{}> = ({}) => {
   return (
     <Wrapper variant="small">
       <Formik
-        initialValues={{ username: "", password: "" }}
+        initialValues={{ usernameOrEmail: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await login({
-            username: values.username,
+            usernameOrEmail: values.usernameOrEmail,
             password: values.password,
           });
           console.log(response);
@@ -35,9 +36,9 @@ export const Login: React.FC<{}> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <InputField
-              label="Username"
-              placeholder="username"
-              name="username"
+              name="usernameOrEmail"
+              label="Username or Email"
+              placeholder="Username or Email"
             ></InputField>
             <Box mt={4}>
               <InputField
@@ -47,6 +48,14 @@ export const Login: React.FC<{}> = ({}) => {
                 type="password"
               ></InputField>
             </Box>
+            <Flex mt={2}>
+              <Box ml="auto">
+                <NextLink href="/forgot-password">
+                  <Link>Forgot Password</Link>
+                </NextLink>
+              </Box>
+            </Flex>
+
             <Button
               backgroundColor="teal"
               mt={4}

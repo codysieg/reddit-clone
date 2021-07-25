@@ -18,10 +18,11 @@ export const Register: React.FC<registerProps> = ({}) => {
   return (
     <Wrapper variant="small">
       <Formik
-        initialValues={{ username: "", password: "" }}
+        initialValues={{ username: "", email: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await register({
             username: values.username,
+            email: values.email,
             password: values.password,
           });
           console.log(response);
@@ -41,6 +42,14 @@ export const Register: React.FC<registerProps> = ({}) => {
               placeholder="username"
               name="username"
             ></InputField>
+            <Box mt={4}>
+              <InputField
+                label="Email"
+                placeholder="email"
+                name="email"
+                type="email"
+              ></InputField>
+            </Box>
             <Box mt={4}>
               <InputField
                 label="Password"
@@ -64,4 +73,4 @@ export const Register: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default withUrqlClientt(createUrqlClient)(Register);
+export default withUrqlClient(createUrqlClient)(Register);

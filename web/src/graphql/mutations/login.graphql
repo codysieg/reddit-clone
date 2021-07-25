@@ -1,11 +1,5 @@
-mutation Login($username: String!, $password: String!) {
-  login(options: { username: $username, password: $password }) {
-    errors {
-      message
-      field
-    }
-    user {
-      ...User
-    }
+mutation Login($usernameOrEmail: String!, $password: String!) {
+  login(usernameOrEmail: $usernameOrEmail, password: $password) {
+    ...UserResponse
   }
 }

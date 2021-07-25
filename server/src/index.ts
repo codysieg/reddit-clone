@@ -7,7 +7,7 @@ import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
-import redis from "redis";
+import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { COOKIE_REDIS, __prod__ } from "./constants";
@@ -23,6 +23,7 @@ declare module "express-session" {
 
 const main = async () => {
   const orm = await MikroORM.init(mikroOrmConfig);
+
   await orm.getMigrator().up();
 
   const app = express();
@@ -35,13 +36,13 @@ const main = async () => {
   app.use(cors(corsOptions));
 
   const RedisStore = connectRedis(session);
-  const redisClient = redis.createClient();
+  const redis = new Redis();
 
   app.use(
     session({
       name: COOKIE_REDIS,
       store: new RedisStore({
-        client: redisClient,
+        client: redis,
         disableTouch: true,
         logErrors: true,
       }),
@@ -61,14 +62,13 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em, req, res }),
-    plugins: [
-      ApolloServerPluginLandingPageGraphQLPlayground({
-        settings: {
-          "request.credentials": "same-origin",
-        },
-      }),
-    ],
+    context: ({ req, res }): MyContext => ({
+      em: orm.em,
+      req,
+      res,
+      redis: redis,
+    }),
+    plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
 
   await apolloServer.start();
