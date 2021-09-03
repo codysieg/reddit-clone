@@ -1,7 +1,11 @@
 import { withUrqlClient } from "next-urql";
+import React from "react";
+import { Layout } from "../components/Layout";
 import NavBar from "../components/NavBar";
 import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
+import NextLink from "next/link";
+import { Link } from "@chakra-ui/layout";
 
 const Index = () => {
   const [{ data }] = usePostsQuery();
@@ -17,11 +21,13 @@ const Index = () => {
   }
 
   return (
-    <>
-      <NavBar />
+    <Layout variant="regular">
+      <NextLink href="/create-post">
+        <Link>Create Post</Link>
+      </NextLink>
       <div>Hello World!</div>
       {body}
-    </>
+    </Layout>
   );
 };
 
