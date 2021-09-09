@@ -15,6 +15,8 @@ import cors from "cors";
 import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
+import path from "path";
+
 
 declare module "express-session" {
   interface Session {
@@ -28,12 +30,13 @@ const main = async () => {
     database: "psql-reddit",
     username: "postgres",
     password: "postgres",
+    migrations: [path.join(__dirname, "./migrations/*")],
     logging: true,
     synchronize: true,
     entities: [Post, User],
   });
 
-  console.log(conn);
+  (await conn).runMigrations();
 
   const app = express();
 

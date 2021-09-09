@@ -1,32 +1,52 @@
 import { withUrqlClient } from "next-urql";
-import React from "react";
+import React, { useState } from "react";
 import { Layout } from "../components/Layout";
-import NavBar from "../components/NavBar";
 import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from "next/link";
-import { Link } from "@chakra-ui/layout";
+import { Link, Stack } from "@chakra-ui/layout";
+import PostWrapper from "../utils/postWrapper";
+import { Button, Flex, Heading } from "@chakra-ui/react";
 
 const Index = () => {
-  const [{ data }] = usePostsQuery();
+  const [variables, setVariables] = useState({limit: 10, cursor: null as string | null})
+  const [{ data, fetching }] = usePostsQuery({variables});
 
   let body = null;
 
-  if (data === undefined || !data) {
+  if (!fetching && !data) {
+    return <div>You got no data at all. Check network tab.</div>;
+  }
+
+  if (data === undefined || (!data && fetching)) {
     body = <div>Loading...</div>;
   } else if (data) {
-    body = data.posts.map((post) => {
-      return <div key={post.id}>{post.title}</div>;
+    body = data.posts.posts.map((post) => {
+      return (
+        <PostWrapper key={post.id} title={post.title} text={post.textSnippet} />
+      );
     });
   }
 
   return (
     <Layout variant="regular">
-      <NextLink href="/create-post">
-        <Link>Create Post</Link>
-      </NextLink>
-      <div>Hello World!</div>
-      {body}
+      <Flex align="center">
+        <Heading>LiReddit</Heading>
+        <NextLink href="/create-post">
+          <Link ml="auto">Create Post</Link>
+        </NextLink>
+      </Flex>
+      <Stack spacing={8}>{body}</Stack>
+      {data && data.posts.hasMore ? (
+        <Flex>
+          <Button onClick={() => setVariables({
+            limit: variables.limit,
+            cursor: data.posts.posts[data.posts.posts.length-1].createdAt
+          })} m="auto" my={8}>
+            Load More...
+          </Button>
+        </Flex>
+      ) : null}
     </Layout>
   );
 };
