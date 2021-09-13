@@ -9,7 +9,7 @@ import PostWrapper from "../utils/postWrapper";
 import { Button, Flex, Heading } from "@chakra-ui/react";
 
 const Index = () => {
-  const [variables, setVariables] = useState({limit: 10, cursor: null as string | null})
+  const [variables, setVariables] = useState({limit: 15, cursor: null as string | null})
   const [{ data, fetching }] = usePostsQuery({variables});
 
   let body = null;
@@ -23,7 +23,7 @@ const Index = () => {
   } else if (data) {
     body = data.posts.posts.map((post) => {
       return (
-        <PostWrapper key={post.id} title={post.title} text={post.textSnippet} />
+        <PostWrapper key={post.id} post={post} />
       );
     });
   }
